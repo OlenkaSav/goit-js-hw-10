@@ -15,22 +15,25 @@ const refs={
 refs.inputField.addEventListener("input", debounce(onImputChanche, DEBOUNCE_DELAY));
 let search='';
 function onImputChanche(){
-search = String(refs.inputField.value).trim();
-
+search = (String(refs.inputField.value)).trim();
+if (search!==''){
 fetchCountries(search).then(makeInterface)
   .catch(error => {
     Notify.failure(('Йой, здається такої країни немає...'), {position: 'center-top', timeout: 1000, fontSize: '20px', width: '380px',});
-  });
+  });}
 }
 
 function makeInterface(array){
-    if (array.length>10){  clearMarkupList();
+    refs.countryInfo.classList.add('is-hidden');
+    clearMarkupList();
+    clearCountry();
+    if (array.length>10){  
         return Notify.info(('Щось забагато варіантів, давай конкретніше...'), {position: 'center-top', timeout: 1000, fontSize: '20px', width: '380px',});
    }
-    else if(array.length===1){clearMarkupList();
+    else if(array.length===1){
         refs.countryInfo.innerHTML=makeMarkupCountry(array[0])}
     else if(array.length===0){clearMarkupList()}
-    else {refs.countryInfo.innerHTML='';
+    else {
         refs.countryList.innerHTML = makeMarkupList(array)}
 }
 
@@ -43,9 +46,13 @@ function makeMarkupCountry({name, capital, population, flags, languages}){
 }
 
 function makeMarkupList(data){
-    refs.countryInfo.classList.add('is-hidden');
+    // refs.countryInfo.classList.add('is-hidden');
     return data.map(({name, flags})=>{return `<li><img src="${flags.png}" alt="flag" width=30px> ${name.official}</li>`;}).join('');};
 
 function clearMarkupList(){
     refs.countryList.innerHTML ='';
+}
+
+function clearCountry(){
+    refs.countryInfo.innerHTML='';
 }
